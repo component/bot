@@ -1,0 +1,17 @@
+{
+  "name": "component-bot",
+  "version": "0.0.1",
+  "description": "Component bot helping keep the component community badass",
+  "keywords": [],
+  "author": "TJ Holowaychuk <tj@vision-media.ca>",
+  "dependencies": {
+    "superagent": "~0.9.7",
+    "debug": "~0.7.0",
+    "shelly": "0.0.3"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "main": "index"
+}
