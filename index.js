@@ -118,6 +118,25 @@ Bot.prototype.fork = function(repo){
 };
 
 /**
+ * Fetch an array of all components and invoke `fn(err, pkgs)`
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Bot.prototype.components = function(fn){
+  request
+  .get('http://component.io/components/all')
+  .end(function(res){
+    if (res.ok) {
+      fn(null, res.body);
+    } else {
+      fn(new Error('response failed with '+ res.status));
+    }
+  })
+};
+
+/**
  * Send pull-request to `repo` with the given `title` and `body`.
  *
  * @param {String} repo
