@@ -69,12 +69,11 @@ Bot.prototype.issue = function(repo, title, body, options){
 
 Bot.prototype.commit = function(repo, msg, fn){
   debug('commit %s "%s"', repo, msg);
-  var author = this.user + ' <forms@vision-media.ca>';
   var cmds = [];
   cmds.push('cd ?/?');
-  cmds.push('git commit -a -m "?" --author="?"');
+  cmds.push('git commit -a -m "?"');
   cmds.push('git push origin master');
-  var cmd = command(cmds.join('&&'), this.clonePath, repo, msg, author);
+  var cmd = command(cmds.join('&&'), this.clonePath, repo, msg);
   debug('exec `%s`', cmd);
   exec(cmd, fn || noop);
 };
