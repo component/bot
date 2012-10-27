@@ -1,29 +1,45 @@
 
 # component-bot
 
-  Component bot helping keep the component community badass
+  Component bot helping keep the component community badass.
+
+## API
+
+### Bot(user:String, pass:String)
+
+  Initialize a new Bot with `user` / `pass`.
+
+### Bot#issue(repo:String, title:String, body:String, [options]:Object)
+
+  Create an issue with the given `title`, `body`, and `options`.
+  
+      bot
+      .issue('visionmedia/superagent', 'Some issue', 'Check this out')
+      .end(function(res){
+        console.log(res.status);
+        console.log(res.body);
+      })
+
+### Bot#commit(repo:String, msg:String, [fn]:Function)
+
+  Commit to `repo` with the given `msg` and invoke `fn(err)`.
+  
+     bot.commit('visionmedia/superagent', 'add license property to component.json');
+
+### Bot#clone(repo:String, fn:Function)
+
+  Clone `repo` to the `/tmp` directory and invoke `fn(err, path)`.
+  
+     bot.clone('visionmedia/superagent', fn);
+
+### Bot#fork(repo:String)
+
+  Fork `repo`.
+
+### Bot#pullrequest(repo:String, title:String, body:String)
+
+  Send pull-request to `repo` with the given `title` and `body`.
 
 ## License 
 
-(The MIT License)
-
-Copyright (c) 2012 TJ Holowaychuk &lt;tj@vision-media.ca&gt;
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  MIT
