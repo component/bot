@@ -71,9 +71,9 @@ Bot.prototype.commit = function(repo, msg, fn){
   debug('commit %s "%s"', repo, msg);
   var cmds = [];
   cmds.push('cd ?/?');
-  cmds.push('git commit -a -m "?"');
+  cmds.push('git commit -a -m "' + msg + '"');
   cmds.push('git push origin master');
-  var cmd = command(cmds.join('&&'), this.clonePath, repo, msg);
+  var cmd = command(cmds.join('&&'), this.clonePath, repo);
   debug('exec `%s`', cmd);
   exec(cmd, fn || noop);
 };
