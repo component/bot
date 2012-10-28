@@ -85,6 +85,29 @@ Bot.prototype.hasForked = function(repo, fn){
 };
 
 /**
+ * Remove all repos and invoke `fn()`.
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Bot.prototype.removeAll = function(fn){
+  debug('remove all repos');
+  var self = this;
+  fn = fn || noop;
+  this.repos(function(err, repos){
+    if (err) return fn(err);
+    var pending = repos.length;
+    repos.forEach(function(repo){
+      self.remove(repo.name, function(){
+        if (err) return fn(err);
+        --pending || fn();
+      });
+    });
+  });
+};
+
+/**
  * Remove repo `name` and invoke `fn(err)`.
  *
  * @param {String} name
@@ -202,7 +225,7 @@ Bot.prototype.fork = function(repo, fn){
           if (yes) return fn();
           poll();
         });
-      }, 1000);
+      }, 500);
     }
 
     poll();
