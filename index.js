@@ -43,7 +43,7 @@ function Bot(user, pass) {
 }
 
 /**
- * Fetch the bots repos and invoke `fn(err, repos)`.
+ * Fetch the bot's repos and invoke `fn(err, repos)`.
  *
  * @param {Function} fn
  * @api public
@@ -56,6 +56,29 @@ Bot.prototype.repos = function(fn){
     if (res.error) return fn(error(res));
     fn(null, res.body);
   })
+};
+
+/**
+ * Check if the bot has forked `repo` and invoke `fn(err, bool)`.
+ *
+ * TODO: assert user...
+ *
+ * @param {String} repo
+ * @param {Function} fn
+ * @api public
+ */
+
+Bot.prototype.hasForked = function(repo, fn){
+  var name = repo.split('/').pop();
+  this.repos(function(err, repos){
+    if (err) return fn(err);
+    for (var i = 0, len = repos.length; i < len; ++i) {
+      if (repos[i].html_url.split('/').pop() == name) {
+        return fn(null, true);
+      }
+    }
+    fn(null, false);
+  });
 };
 
 /**
