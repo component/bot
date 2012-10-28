@@ -73,7 +73,7 @@ Bot.prototype.hasForked = function(repo, fn){
   this.repos(function(err, repos){
     if (err) return fn(err);
     for (var i = 0, len = repos.length; i < len; ++i) {
-      if (repos[i].html_url.split('/').pop() == name) {
+      if (repos[i].name == name) {
         return fn(null, true);
       }
     }
@@ -85,11 +85,13 @@ Bot.prototype.hasForked = function(repo, fn){
  * Remove repo `name` and invoke `fn(err)`.
  *
  * @param {String} name
- * @param {Function} fn
+ * @param {Function} [fn]
  * @api public
  */
 
 Bot.prototype.remove = function(name, fn){
+  fn = fn || noop;
+
   this
   .del('/repos/' + this.user + '/' + name)
   .end(function(res){
