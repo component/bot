@@ -6,8 +6,8 @@
 var request = require('superagent')
   , exec = require('child_process').exec
   , debug = require('debug')('component-bot')
-  , http = require('http')
   , command = require('shelly')
+  , http = require('http')
   , noop = function(){};
 
 /**
@@ -78,6 +78,23 @@ Bot.prototype.hasForked = function(repo, fn){
       }
     }
     fn(null, false);
+  });
+};
+
+/**
+ * Remove repo `name` and invoke `fn(err)`.
+ *
+ * @param {String} name
+ * @param {Function} fn
+ * @api public
+ */
+
+Bot.prototype.remove = function(name, fn){
+  this
+  .del('/repos/' + this.user + '/' + name)
+  .end(function(res){
+    if (res.error) return fn(error(res));
+    fn();
   });
 };
 
@@ -202,6 +219,21 @@ Bot.prototype.pullrequest = function(repo, title, body, options){
   options.head = this.user + ':master';
   return this.post('/repos/' + repo + '/pulls')
     .send(options);
+};
+
+/**
+ * DELETE `path`.
+ *
+ * @param {String} path
+ * @return {Request}
+ * @api private
+ */
+
+Bot.prototype.del = function(path){
+  return request
+    .del('https://api.github.com' + path)
+    .auth(this.user, this.pass)
+    .send({});
 };
 
 /**
