@@ -6,6 +6,7 @@
 var request = require('superagent')
   , exec = require('child_process').exec
   , debug = require('debug')('component-bot')
+  , http = require('http')
   , command = require('shelly')
   , noop = function(){};
 
@@ -14,6 +15,18 @@ var request = require('superagent')
  */
 
 module.exports = Bot;
+
+/**
+ * Return an error for `res`.
+ *
+ * @param {Response} res
+ * @return {Error}
+ * @api private
+ */
+
+function error(res) {
+  return new Error('got ' + res.status + ' "' + http.STATUS_CODES[res.status] + '" response');
+}
 
 /**
  * Initialize a new Bot with `user` / `pass`.
@@ -28,6 +41,22 @@ function Bot(user, pass) {
   this.pass = pass;
   this.clonePath = 'clones';
 }
+
+/**
+ * Fetch the bots repos and invoke `fn(err, repos)`.
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Bot.prototype.repos = function(fn){
+  this
+  .get('/user/repos')
+  .end(function(res){
+    if (res.error) return fn(error(res));
+    fn(null, res.body);
+  })
+};
 
 /**
  * Create an issue with the given `title`, `body`, and `options`.
@@ -127,11 +156,8 @@ Bot.prototype.components = function(fn){
   request
   .get('http://component.io/components/all')
   .end(function(res){
-    if (res.ok) {
-      fn(null, res.body);
-    } else {
-      fn(new Error('response failed with '+ res.status));
-    }
+    if (res.error) return fn(error(res));
+    fn(null, res.body);
   })
 };
 
@@ -153,6 +179,20 @@ Bot.prototype.pullrequest = function(repo, title, body, options){
   options.head = this.user + ':master';
   return this.post('/repos/' + repo + '/pulls')
     .send(options);
+};
+
+/**
+ * GET `path`.
+ *
+ * @param {String} path
+ * @return {Request}
+ * @api private
+ */
+
+Bot.prototype.get = function(path){
+  return request
+    .get('https://api.github.com' + path)
+    .auth(this.user, this.pass);
 };
 
 /**
