@@ -50,6 +50,8 @@ function Bot(user, pass) {
  */
 
 Bot.prototype.repos = function(fn){
+  debug('fetch repos');
+
   this
   .get('/user/repos')
   .end(function(res){
@@ -69,6 +71,7 @@ Bot.prototype.repos = function(fn){
  */
 
 Bot.prototype.hasForked = function(repo, fn){
+  debug('has forked %s', repo);
   var name = repo.split('/').pop();
   this.repos(function(err, repos){
     if (err) return fn(err);
@@ -90,6 +93,7 @@ Bot.prototype.hasForked = function(repo, fn){
  */
 
 Bot.prototype.remove = function(name, fn){
+  debug('remove repo %s', name);
   fn = fn || noop;
 
   this
@@ -174,17 +178,35 @@ Bot.prototype.clone = function(repo, fn){
 };
 
 /**
- * Fork `repo`.
+ * Fork `repo`, poll, and invoke `fn(err)`.
  *
  * @param {String} repo
- * @return {Request}
+ * @param {Function} fn
  * @api public
  */
 
-Bot.prototype.fork = function(repo){
+Bot.prototype.fork = function(repo, fn){
+  var self = this;
   debug('fork %s', repo);
-  return this.post('/repos/' + repo + '/forks')
-    .send({});
+
+  this.post('/repos/' + repo + '/forks')
+  .send({})
+  .end(function(res){
+    if (res.error) return fn(error(res));
+
+    function poll() {
+      debug('poll %s', repo);
+      setTimeout(function(){
+        self.hasForked(repo, function(err, yes){
+          if (err) return fn(err);
+          if (yes) return fn();
+          poll();
+        });
+      }, 1000);
+    }
+
+    poll();
+  });
 };
 
 /**
