@@ -171,7 +171,7 @@ Bot.prototype.commit = function(repo, msg, fn){
   cmds.push('cd ?/?');
   cmds.push('git commit -a -m "' + msg + '"');
   cmds.push('git push origin master');
-  var cmd = command(cmds.join('&&'), this.clonePath, repo);
+  var cmd = command(cmds.join(' && '), this.clonePath, repo);
   debug('exec `%s`', cmd);
   exec(cmd, fn || noop);
 };
